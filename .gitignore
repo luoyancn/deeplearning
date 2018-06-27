@@ -1,4 +1,5 @@
 .vscode/
 py3/
 *__pycache__/
-*data
+*data/
+*models/
