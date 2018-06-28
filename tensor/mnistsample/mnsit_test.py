@@ -17,7 +17,8 @@ def check_accuracy(mnist):
         y_ = tf.placeholder(tf.float32, [None, mnsit_forward.OUTPUT_NODE])
         y = mnsit_forward.forward(x, None)
 
-        ema = tf.train.ExponentialMovingAverage(mnsit_backward.MOVING_AVG_DECAY)
+        ema = tf.train.ExponentialMovingAverage(
+            mnsit_backward.MOVING_AVG_DECAY)
         ema_restore = ema.variables_to_restore()
         saver = tf.train.Saver(ema_restore)
 
@@ -26,11 +27,15 @@ def check_accuracy(mnist):
 
         while 1:
             with tf.Session() as sess:
-                ckpt = tf.train.get_checkpoint_state(mnsit_backward.MODEL_SAVE_PATH)
+                ckpt = tf.train.get_checkpoint_state(
+                    mnsit_backward.MODEL_SAVE_PATH)
                 if ckpt and ckpt.model_checkpoint_path:
                     saver.restore(sess, ckpt.model_checkpoint_path)
-                    global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
-                    accuracy_rate = sess.run(accuracy, feed_dict={x: mnist.test.images, y_: mnist.test.labels})
+                    global_step = ckpt.model_checkpoint_path.split(
+                        '/')[-1].split('-')[-1]
+                    accuracy_rate = sess.run(
+                        accuracy, feed_dict={x: mnist.test.images,
+                                             y_: mnist.test.labels})
                     fmt = 'After {:s} steps, test accuracy rate is {:.09f}'
                     print(fmt.format(global_step, accuracy_rate))
             time.sleep(TEST_INTERVAL_SECS)
