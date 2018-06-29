@@ -1,0 +1,10 @@
+train_0.png 5
+train_1.png 0
+train_3.png 1
+train_5.png 2
+train_7.png 3
+train_9.png 4
+train_22.png 9
+train_32.png 6
+train_41.png 8
+train_42.png 7
