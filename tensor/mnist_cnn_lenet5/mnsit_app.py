@@ -5,25 +5,30 @@ import tensorflow as tf
 import numpy as np
 
 import mnsit_backward
-import mnsit_forward
+import mnsit_forward_cnn_lenet5
 
 
 def restore_model(pic_array):
     # 重现计算图
     with tf.Graph().as_default() as gph:
         # 只需要对输入占位
-        x = tf.placeholder(tf.float32, [None, mnsit_forward.INPUT_NODE])
-        y = mnsit_forward.forward(x, None)
+        x = tf.placeholder(
+            tf.float32, [1, mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE,
+                         mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE,
+                         mnsit_forward_cnn_lenet5.MNIST_IMAGE_CHANNELS])
+        y = mnsit_forward_cnn_lenet5.forward(x, False, None)
 
         # y的最大值对应的索引号，就是预测的数字的值
         pre_value = tf.argmax(y, 1)
 
-        variable_avg = tf.train.ExponentialMovingAverage(mnsit_backward.MOVING_AVG_DECAY)
+        variable_avg = tf.train.ExponentialMovingAverage(
+            mnsit_backward.MOVING_AVG_DECAY)
         variable_to_restore = variable_avg.variables_to_restore()
         saver = tf.train.Saver(variable_to_restore)
 
         with tf.Session() as sess:
-            ckpt = tf.train.get_checkpoint_state(mnsit_backward.MODEL_SAVE_PATH)
+            ckpt = tf.train.get_checkpoint_state(
+                mnsit_backward.MODEL_SAVE_PATH)
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(sess, ckpt.model_checkpoint_path)
                 # 预测操作
@@ -35,7 +40,10 @@ def pre_dic(pic_path, wg_bg=False):
     # 读取图片
     img = Image.open(pic_path)
     # 用消除锯齿的方式，将图片resize 为28 × 28
-    reIm = img.resize((28, 28), Image.ANTIALIAS)
+    reIm = img.resize(
+        (mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE,
+         mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE),
+        Image.ANTIALIAS)
     # 将resize的图片转换为灰度图，并转换为矩阵的方式
     img_array = np.array(reIm.convert('L'))
 
@@ -56,7 +64,9 @@ def pre_dic(pic_path, wg_bg=False):
                     # 白点
                     img_array[i][j] = 255
     # 将图片整理为1 × 784的矩阵
-    nm_array = img_array.reshape([1, 784])
+    nm_array = img_array.reshape(
+        [1, mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE,
+         mnsit_forward_cnn_lenet5.MNIST_IMAGE_SIZE, 1])
     # 转换为浮点型
     nm_array = nm_array.astype(np.float32)
     # 将rbg从0-255变为1-255的数
