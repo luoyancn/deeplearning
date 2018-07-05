@@ -7,3 +7,4 @@ py2/
 *tfrecord
 *vgg/
 *.npy
+*.pyc
