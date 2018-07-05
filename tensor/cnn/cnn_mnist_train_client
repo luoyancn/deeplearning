@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ ! -z $model_dir ]; then
+   ARGS="--model_dir=$model_dir"
+fi
+
+if [ ! -z $data_dir ]; then
+   ARGS="--data_dir=$data_dir $ARGS"
+fi
+
+if [ ! -z $iterations ]; then
+   ARGS="--iterations=$iterations $ARGS"
+fi
+
+if [ ! -z $display_step ]; then
+   ARGS="--display_step=$display_step $ARGS"
+fi
+
+if [ ! -z $learning_rate ]; then
+   ARGS="--learning_rate=$learning_rate $ARGS"
+fi
+
+python /root/mnist/cnn_mnist_train.py $ARGS

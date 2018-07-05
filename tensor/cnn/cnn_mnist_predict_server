@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python /root/mnist/cnn_mnist_predict_server.py 

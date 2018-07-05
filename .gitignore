@@ -1,6 +1,9 @@
 .vscode/
 py3/
+py2/
 *__pycache__/
 *data/
 *models/
 *tfrecord
+*vgg/
+*.npy
