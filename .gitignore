@@ -8,3 +8,4 @@ py2/
 *vgg/
 *.npy
 *.pyc
+events.out.tfevents.*
