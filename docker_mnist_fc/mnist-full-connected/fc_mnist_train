@@ -1,0 +1,35 @@
+#/bin/sh
+
+if [ ! -z $batch_size ]; then
+   ARGS="--batch_size=$batch_size"
+fi
+
+if [ ! -z $learning_rate_base ]; then
+   ARGS="--learning_rate_base=$learning_rate_base $ARGS"
+fi
+
+if [ ! -z $learning_rate_decay ]; then
+   ARGS="--learning_rate_decay=$learning_rate_decay $ARGS"
+fi
+
+if [ ! -z $regularizer ]; then
+   ARGS="--regularizer=$regularizer $ARGS"
+fi
+
+if [ ! -z $steps ]; then
+   ARGS="--steps=$steps $ARGS"
+fi
+
+if [ ! -z $model_save_path ]; then
+   ARGS="--model_save_path=$model_save_path $ARGS"
+fi
+
+if [ ! -z $training_data_path ]; then
+   ARGS="--training_data_path=$training_data_path $ARGS"
+fi
+
+if [ ! -z $log_dir ]; then
+   ARGS="--log_dir=$log_dir $ARGS"
+fi
+
+python /root/mnist-full-connected/mnist_backward.py $ARGS

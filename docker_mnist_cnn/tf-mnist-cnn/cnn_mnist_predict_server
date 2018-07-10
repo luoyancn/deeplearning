@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python /root/tf-mnist-cnn/cnn_mnist_predict_server.py

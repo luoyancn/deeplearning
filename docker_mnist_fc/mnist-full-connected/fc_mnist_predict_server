@@ -1,0 +1,3 @@
+#!/bin/sh
+
+python /root/mnist-full-connected/fc_mnist_predict_server.py

@@ -1,0 +1,11 @@
+#!/bin/sh
+
+ARGS=""
+
+image=$1
+
+if [ ! -z $model_dir ]; then
+   ARGS="--model_dir=$model_dir"
+fi
+
+python /root/mnist-full-connected/mnist_app.py $ARGS --image $image
