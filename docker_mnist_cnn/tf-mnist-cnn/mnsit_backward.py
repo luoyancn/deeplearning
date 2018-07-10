@@ -23,21 +23,24 @@ flags.DEFINE_float('learning_rate_decay', 0.99,
 flags.DEFINE_float('regularizer', 0.0001,
                    'The regularizer for Neural Network training. '
                    'Default is 0.0001')
-flags.DEFINE_integer('steps', 50000,
+flags.DEFINE_integer('steps', 10000,
                      'The total traning times. '
-                     'Default is 50000')
+                     'Default is 10000')
+flags.DEFINE_integer('eval_step', 1000,
+                     'How many steps to eval train result. '
+                     'Default is 1000')
 flags.DEFINE_string('model_name', 'mnist_cnn',
                     'The name of train model. '
                     'Default is mnist_cnn')
-flags.DEFINE_string('model_save_path', '/root/tensorflow/model',
+flags.DEFINE_string('model_dir', '/root/tensorflow/model',
                      'The models trained save path. '
-                     'Default is mnist_models')
-flags.DEFINE_string('training_data_path', '/root/tf-mnist-cnn/mnist_data',
+                     'Default is /root/tensorflow/model')
+flags.DEFINE_string('data_dir', '/root/tf-mnist-cnn/mnist_data',
                      'The path of training dataset path. '
-                     'Default is mnist_data')
+                     'Default is /root/tf-mnist-cnn/mnist_data')
 flags.DEFINE_string('log_dir', '/root/tensorflow/log',
                      'The path of trained logs path. '
-                     'Default is mnist_cnn_logs')
+                     'Default is /root/tensorflow/log')
 FLAGS = flags.FLAGS
 
 
@@ -102,7 +105,7 @@ def backward(mnist):
         init_op = tf.global_variables_initializer()
         sess.run(init_op)
 
-        ckpt = tf.train.get_checkpoint_state(FLAGS.model_save_path)
+        ckpt = tf.train.get_checkpoint_state(FLAGS.model_dir)
         if ckpt and ckpt.model_checkpoint_path:
             saver.restore(sess, ckpt.model_checkpoint_path)
 
@@ -115,10 +118,10 @@ def backward(mnist):
                 feed_dict={x: xs, y_: ys})
             writer.add_summary(summary, i)
 
-            if 0 == i % 1000:
+            if 0 == i % FLAGS.eval_step:
                 fmt = 'After {:05d} steps, loss is {:.09f}, learning rate is {:.09f}'
                 print(fmt.format(step, loss_value, learning_rate_val))
-                saver.save(sess, os.path.join(FLAGS.model_save_path, FLAGS.model_name),
+                saver.save(sess, os.path.join(FLAGS.model_dir, FLAGS.model_name),
                            global_step=global_step)
 
                 fmt = 'And test accuracy rate is {:.09f}'
@@ -130,7 +133,7 @@ def backward(mnist):
 
 
 def main(unused_args):
-    mnist = input_data.read_data_sets(FLAGS.training_data_path, one_hot=True)
+    mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
     backward(mnist)
 
 
