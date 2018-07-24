@@ -37,5 +37,5 @@ with tf.Session() as sess:
         sess.run(train_step, feed_dict={x:X[start:end], y_: Y_[start:end]})
         if 0 == i % 500:
             print('After {:04d} traning steps'.format(i), sess.run(w1))
-            print(sess.run(loss_cem, feed_dict={x: X, y_:Y_}))
+            sess.run(loss_cem, feed_dict={x: X, y_:Y_})
     print(sess.run(w1))
