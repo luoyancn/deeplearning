@@ -30,6 +30,14 @@ python grpc_tensorflow_server.py --cluster_spec='worker|localhost:2221;localhost
 python diss.py --data_dir /opt/corp.awcloud.com/ai-demo-scripts/data --ps localhost:2223 --worker_index 1 --ps_index 0
 ```
 
+## 模型推测
+
+启动命令如下：
+
+```bash
+python diss_predict.py --model_dir models --ps localhost:2223 --worker_index 1 --ps_index 0 --image /opt/github.com/deeplearning/mnsit_pic/whitebg_blackfg/2.png
+```
+
 ### 参数说明
 
 上述运行集群的命令当中，`cluster_spec`指向的是本地，假设生产环境如下：
@@ -46,15 +54,15 @@ python diss.py --data_dir /opt/corp.awcloud.com/ai-demo-scripts/data --ps localh
 所有的节点统一使用`2222`端口，则上述命令修改如下：
 
 ```bash
-python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222,192.168.1.3:2222,ps|192.168.1.4:2222,192.168.1.5:2222' --job_name=worker --task_id=0
+python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222;192.168.1.3:2222,ps|192.168.1.4:2222;192.168.1.5:2222' --job_name=worker --task_id=0
 
-python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222,192.168.1.3:2222,ps|192.168.1.4:2222,192.168.1.5:2222' --job_name=worker --task_id=1
+python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222;192.168.1.3:2222,ps|192.168.1.4:2222;192.168.1.5:2222' --job_name=worker --task_id=1
 
-python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222,192.168.1.3:2222,ps|192.168.1.4:2222,192.168.1.5:2222' --job_name=worker --task_id=2
+python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222;192.168.1.3:2222,ps|192.168.1.4:2222;192.168.1.5:2222' --job_name=worker --task_id=2
 
-python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222,192.168.1.3:2222,ps|192.168.1.4:2222,192.168.1.5:2222' --job_name=ps --task_id=0
+python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222;192.168.1.3:2222,ps|192.168.1.4:2222;192.168.1.5:2222' --job_name=ps --task_id=0
 
-python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222,192.168.1.3:2222,ps|192.168.1.4:2222,192.168.1.5:2222' --job_name=ps --task_id=1
+python grpc_tensorflow_server.py --cluster_spec='worker|192.168.1.1:2221;192.168.1.2:2222;192.168.1.3:2222,ps|192.168.1.4:2222;192.168.1.5:2222' --job_name=ps --task_id=1
 ```
 
 在上面运行训练的命令当中，
