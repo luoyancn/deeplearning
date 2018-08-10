@@ -89,3 +89,11 @@ python diss_predict.py --model_dir models --ps tf19-dis-ps-0.tf19-dis-ps:2222 --
 例子的运行结果如图：
 
 ![result](result.png)
+
+## Jupyter notebook 方式运行
+
+Jupyter notebook提供了页面的方式进行运行，示例代码默认也支持通过页面进行运行，但是是完全使用的默认值。
+
+![jupyter](juypter.png)
+
+但是需要注意的是，图片中红框内部为代码的执行结果。执行结果之后的错误信息，并不是指代码存在问题，而是由于代码执行完成之后，会自动退出，但是juypter notebook在运行过程中，不允许程序退出，因此会提示错误信息。但这个和真实结果无关。

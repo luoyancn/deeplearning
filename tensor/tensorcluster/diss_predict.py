@@ -1,23 +1,14 @@
 # -*- coding:utf-8 -*-
+import argparse
+import os
+import sys
 
 from PIL import Image
 import tensorflow as tf
 import numpy as np
 
-flags = tf.app.flags
-flags.DEFINE_string('model_dir', '/root/tensorflow/model',
-                     'The path of trained model saved. '
-                     'Default is /root/tensorflow/model')
-flags.DEFINE_string('image', '',
-                     'The pictures to predict'
-                     'Must be provided')
-flags.DEFINE_string('ps', '',
-                    'Params Server of TF cluster.Default is localhost:2223')
-flags.DEFINE_integer('worker_index', 0,
-                    'The index of TF Worker Servers.Default is 0')
-flags.DEFINE_integer('ps_index', 0,
-                    'The index of TF Params Servers.Default is 0')
-FLAGS=flags.FLAGS
+
+FLAGS = None
 
 def deepnn(x, ps_device, tower_device):
     """deepnn builds the graph for a deep net for classifying digits.
@@ -139,6 +130,18 @@ def bias_variable(shape, name, ps_device, tower_device):
     return ps_var, replica_var
 
 def restore_model(pic_array):
+
+    ps_url = FLAGS.ps
+    cluster_spec = os.environ.get('CLUSTER_SPEC', '')
+    ps_and_worker = cluster_spec.split(',')
+    param_servers = [p for p in ps_and_worker if p.startswith('ps')]
+    if param_servers:
+        try:
+            ps_urls = param_servers[0].split('|')[1:]
+            ps_url = ps_urls[0]
+        except Exception:
+            pass
+
     # 重现计算图
     with tf.Graph().as_default() as gph:
         worker = FLAGS.worker_index
@@ -159,7 +162,7 @@ def restore_model(pic_array):
 
         saver = tf.train.Saver()
 
-        with tf.Session("grpc://%s" % FLAGS.ps) as sess:
+        with tf.Session("grpc://%s" % ps_url) as sess:
             ckpt = tf.train.get_checkpoint_state(FLAGS.model_dir)
             if ckpt and ckpt.model_checkpoint_path:
                 saver.restore(sess, ckpt.model_checkpoint_path)
@@ -206,8 +209,28 @@ def application(image_path, wg_bg=False):
     pre_val = restore_model(pic_array)
     print(pre_val)
 
-def main(unused_args):
+def main(argv):
     application(FLAGS.image)
 
 if __name__ == '__main__':
-    tf.app.run()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--model_dir', type=str,
+                        default='/root/models',
+                        help='The path of trained model saved')
+    parser.add_argument('--image', type=str,
+                        default='/root/images/5.png',
+                        help='The pictures to predict')
+    parser.add_argument('--model_name', type=str,
+                        default='mnist',
+                        help='Name of models')
+    parser.add_argument('--ps', type=str,
+                        default='localhost:2223',
+                        help='Params Server of TF cluster.Default is localhost:2223')
+    parser.add_argument('--worker_index', type=int,
+                        default=0,
+                        help='The index of TF Worker Servers.Default is 0')
+    parser.add_argument('--ps_index', type=int,
+                        default=0,
+                        help='The index of TF Params Servers.Default is 0')
+    FLAGS, unparsed = parser.parse_known_args()
+    tf.app.run(main=main, argv=[sys.argv[0]] + unparsed)

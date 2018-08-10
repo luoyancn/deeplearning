@@ -171,7 +171,18 @@ def main(argv):
 
     saver = tf.train.Saver()
 
-    with tf.Session("grpc://%s" % FLAGS.ps) as sess:
+    ps_url = FLAGS.ps
+    cluster_spec = os.environ.get('CLUSTER_SPEC', '')
+    ps_and_worker = cluster_spec.split(',')
+    param_servers = [p for p in ps_and_worker if p.startswith('ps')]
+    if param_servers:
+        try:
+            ps_urls = param_servers[0].split('|')[1:]
+            ps_url = ps_urls[0]
+        except Exception:
+            pass
+
+    with tf.Session("grpc://%s" % ps_url) as sess:
         sess.run(tf.global_variables_initializer())
 
         ckpt = tf.train.get_checkpoint_state(FLAGS.model_save_path)
@@ -205,10 +216,10 @@ def main(argv):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--data_dir', type=str,
-                        default='/opt/corp.awcloud.com/ai-demo-scripts/data',
+                        default='/root/data',
                         help='Directory for storing input data')
     parser.add_argument('--model_save_path', type=str,
-                        default='models',
+                        default='/root/models',
                         help='Directory for storing training data')
     parser.add_argument('--model_name', type=str,
                         default='mnist',
