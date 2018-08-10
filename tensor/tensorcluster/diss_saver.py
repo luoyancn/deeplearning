@@ -136,6 +136,10 @@ def bias_variable(shape, name, ps_device, tower_device):
   
 def main(argv):
     # Import data
+    try:
+        os.makedirs(FLAGS.model_save_path)
+    except OSError as exc:
+        pass
     mnist = input_data.read_data_sets(FLAGS.data_dir, one_hot=True)
     worker = FLAGS.worker_index
     ps = FLAGS.ps_index
